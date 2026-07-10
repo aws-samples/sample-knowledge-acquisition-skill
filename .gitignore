@@ -1,0 +1,5 @@
+__pycache__/
+# Prevent accidental wiki output in the skill directory.
+# Scripts should be run from the user's project directory; any wiki/
+# created here is a mistake.
+wiki/
