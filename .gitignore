@@ -3,3 +3,11 @@ __pycache__/
 # Scripts should be run from the user's project directory; any wiki/
 # created here is a mistake.
 wiki/
+
+# Web app
+webapp/node_modules/
+webapp/dist/
+
+# CDK
+infrastructure/cdk.out/
+infrastructure/node_modules/
