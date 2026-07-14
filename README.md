@@ -6,6 +6,8 @@ Unlike RAG (which rediscovers knowledge from scratch per query), the LLM Wiki co
 
 The skill ships with a **Cloudscape-based web app** for visualizing wikis — browse pages, explore the knowledge graph, filter by type/tags, and navigate wikilinks in a browser. Run it locally against any wiki directory (no AWS required), or deploy it to CloudFront for team access. An **AWS serverless infrastructure** (CDK) is included for sharing wikis across multiple agents and humans: wikis are persisted in CodeCommit, indexed automatically on push, and served through a CloudFront-backed API. Multiple agents can collaborate on the same wiki via standard git operations.
 
+![Knowledge Graph Visualization](docs/images/graph.png)
+
 ## Installation
 
 ```bash
