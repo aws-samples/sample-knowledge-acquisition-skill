@@ -4,6 +4,8 @@ Build and maintain a persistent, compounding knowledge base as interlinked markd
 
 Unlike RAG (which rediscovers knowledge from scratch per query), the LLM Wiki compiles knowledge once and keeps it current. Cross-references are pre-built, contradictions are flagged, and synthesis reflects everything ingested. The wiki distills to state-of-the-art: it answers *"What is the best way to do X right now?"* rather than cataloging every historical approach.
 
+The skill ships with a **Cloudscape-based web app** for visualizing wikis — browse pages, explore the knowledge graph, filter by type/tags, and navigate wikilinks in a browser. Run it locally against any wiki directory (no AWS required), or deploy it to CloudFront for team access. An **AWS serverless infrastructure** (CDK) is included for sharing wikis across multiple agents and humans: wikis are persisted in CodeCommit, indexed automatically on push, and served through a CloudFront-backed API. Multiple agents can collaborate on the same wiki via standard git operations.
+
 ## Installation
 
 ```bash
@@ -53,6 +55,27 @@ This skill activates automatically in Kiro when you ask it to research topics, b
 | *"Lint the wiki and fix any issues"* | Checks for orphan pages, broken wikilinks, stale content, and missing cross-references |
 | *"Audit the wiki for outdated content"* | Identifies pages that may be superseded by newer research |
 | *"Update the wiki's index"* | Rebuilds `index.md` to reflect current wiki content |
+
+### Visualizing the Wiki
+
+| Prompt | What it does |
+|--------|--------------|
+| *"Run the local webapp"* | Starts the dev-server + Vite frontend at http://localhost:5173 pointing at your wiki |
+| *"Visualize this wiki"* | Same as above — launches the Cloudscape web app for browsing the wiki in a browser |
+| *"Start the webapp for my-research-wiki"* | Starts the local server with `WIKI_DIRS` pointing at the specified directory |
+
+The webapp auto-detects wiki directories and bypasses authentication on localhost — no login needed during development.
+
+### Deploying to AWS
+
+| Prompt | What it does |
+|--------|--------------|
+| *"Deploy the AWS infrastructure"* | Runs `cdk deploy WikiPlatformStack` — provisions CodeCommit, Lambda, CloudFront, Cognito, SNS |
+| *"Add my wiki to the platform"* | Creates a CodeCommit repo, registers in SSM, pushes content, triggers the indexer |
+| *"Deploy the webapp to AWS"* | Builds the React app with production env vars and deploys to S3/CloudFront |
+| *"Create a user for the webapp"* | Creates a Cognito user with a permanent password |
+
+These operations use the utility scripts in `scripts/` under the hood and auto-detect region and stack outputs from CloudFormation.
 
 ## How It Works
 
