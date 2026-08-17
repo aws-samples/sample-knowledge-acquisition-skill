@@ -12,8 +12,14 @@ import {
   GetParametersByPathCommand,
 } from '@aws-sdk/client-ssm';
 
-const codecommit = new CodeCommitClient();
-const ssm = new SSMClient();
+// AWS Solutions usage-tracking token, set by the CDK stack (single source of
+// truth) as the USER_AGENT_STRING env var. Undefined when unset -> SDK ignores.
+const SOLUTION_USER_AGENT = process.env.USER_AGENT_STRING
+  ? [[process.env.USER_AGENT_STRING]]
+  : undefined;
+
+const codecommit = new CodeCommitClient({ customUserAgent: SOLUTION_USER_AGENT });
+const ssm = new SSMClient({ customUserAgent: SOLUTION_USER_AGENT });
 
 const DEFAULT_BRANCH = process.env.DEFAULT_BRANCH || 'main';
 

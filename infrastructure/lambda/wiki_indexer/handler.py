@@ -6,6 +6,7 @@ Builds static JSON artifacts (graph.json, index.json, search.json) and
 writes them to S3, then invalidates the CloudFront distribution.
 """
 
+import solution_user_agent  # noqa: F401 - registers the AWS Solutions user-agent hook; import first
 import json
 import os
 import re

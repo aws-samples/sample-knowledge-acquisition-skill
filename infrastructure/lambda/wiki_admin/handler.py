@@ -1,5 +1,6 @@
 """Wiki Admin Lambda handler — creates and deletes wikis dynamically."""
 
+import solution_user_agent  # noqa: F401 - registers the AWS Solutions user-agent hook; import first
 import json
 import os
 import re

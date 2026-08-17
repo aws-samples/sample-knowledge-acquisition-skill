@@ -18,10 +18,22 @@ from aws_cdk import (
 )
 from constructs import Construct
 
+from stacks.solution import SOLUTION_USER_AGENT
+
 
 class WikiPlatformStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        # Shared layer providing the AWS Solutions user-agent hook to the
+        # Python Lambdas below (defined once, in infrastructure/layers).
+        solution_user_agent_layer = _lambda.LayerVersion(
+            self,
+            "SolutionUserAgentLayer",
+            code=_lambda.Code.from_asset("layers/solution_user_agent"),
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_12],
+            description="AWS Solutions usage-tracking user-agent hook (solution_user_agent)",
+        )
 
         # 1. Cognito User Pool
         user_pool = cognito.UserPool(
@@ -98,6 +110,7 @@ class WikiPlatformStack(Stack):
             timeout=Duration.seconds(15),
             environment={
                 "DEFAULT_BRANCH": "main",
+                "USER_AGENT_STRING": SOLUTION_USER_AGENT,
             },
         )
 
@@ -133,9 +146,11 @@ class WikiPlatformStack(Stack):
             code=_lambda.Code.from_asset("lambda/wiki_admin"),
             memory_size=256,
             timeout=Duration.seconds(30),
+            layers=[solution_user_agent_layer],
             environment={
                 "DEFAULT_BRANCH": "main",
                 "SNS_TOPIC_ARN": wiki_changes_topic.topic_arn,
+                "USER_AGENT_STRING": SOLUTION_USER_AGENT,
             },
         )
 
@@ -179,9 +194,11 @@ class WikiPlatformStack(Stack):
             code=_lambda.Code.from_asset("lambda/wiki_indexer"),
             memory_size=1024,
             timeout=Duration.seconds(120),
+            layers=[solution_user_agent_layer],
             environment={
                 "DEFAULT_BRANCH": "main",
                 "DATA_BUCKET": ui_bucket.bucket_name,
+                "USER_AGENT_STRING": SOLUTION_USER_AGENT,
             },
         )
 
